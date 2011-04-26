@@ -101,7 +101,7 @@ class SimpleConfig:
 		"""Adds a new option/value to the config."""
 		self.configopts.append([option, value])
 
-	def remove(self, option):
+	def remove_all(self, option):
 		"""Removes an option from the config. If multiple
 		instances are found, it deletes all of them."""
 		found = False
