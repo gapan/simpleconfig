@@ -101,6 +101,24 @@ class SimpleConfig:
 		"""Adds a new option/value to the config."""
 		self.configopts.append([option, value])
 
+	def remove(self, option, value):
+		"""Remove an otion/value pair from the config. If there
+		are multiple occurences in will only remove all of them.
+		Raises a ValueError if there is no match for the
+		option/value pair.
+		"""
+		found = False
+		items_to_remove = []
+		for i in self.configopts:
+			if i[0] == option and i[1] == value:
+				items_to_remove.append(i)
+				found = True
+		if not found:
+			raise ValueError('No option with the name '+option+' and value '+value)
+		else:
+			for i in items_to_remove:
+				self.configopts.remove(i)
+
 	def remove_all(self, option):
 		"""Removes an option from the config. If multiple
 		instances are found, it deletes all of them."""
