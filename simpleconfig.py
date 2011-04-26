@@ -2,7 +2,7 @@
 #
 # Written by George Vlahavas <vlahavas~at~gmail~dot~com>
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 class SimpleConfig:
 	"""This is a class for managing simple configuration files with
