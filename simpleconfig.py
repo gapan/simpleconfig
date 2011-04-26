@@ -57,7 +57,7 @@ class SimpleConfig:
 			raise ValueError('No option with the name '+option)
 		return value
 	
-	def get_multiple(self, option):
+	def get_all(self, option):
 		"""Returns a list of matching options in the file. This
 		can be used for options that can have more than one
 		values.
