@@ -40,7 +40,8 @@ class SimpleConfig:
 	def read(self):
 		"""Returns all options/values from the config file to a
 		list. The list is formatted like:
-		[[option, value], [option, value]...]"""
+		[[option, value], [option, value]...]
+		"""
 		return self.configopts
 
 	def get(self, option):
@@ -61,7 +62,8 @@ class SimpleConfig:
 		"""Returns a list of matching options in the file. This
 		can be used for options that can have more than one
 		values.
-		Raises a ValueError if there is no match for option."""
+		Raises a ValueError if there is no match for option.
+		"""
 		values = []
 		for i in self.read():
 			if i[0] == option:
@@ -74,7 +76,8 @@ class SimpleConfig:
 	def change(self, option, oldval, newval):
 		"""Changes an old value of an option to a new value.
 		Raises a ValueError if there is no match for
-		option/oldval."""
+		option/oldval.
+		"""
 		found = False
 		for i in self.configopts:
 			if i[0] == option and i[1] == oldval:
@@ -88,7 +91,8 @@ class SimpleConfig:
 		are multiple options with the same name, it will only
 		change the first occurence.
 		Raises a ValueError if there is no match for
-		option."""
+		option.
+		"""
 		found = False
 		for i in self.configopts:
 			if i[0] == option:
@@ -121,7 +125,8 @@ class SimpleConfig:
 
 	def remove_all(self, option):
 		"""Removes an option from the config. If multiple
-		instances are found, it deletes all of them."""
+		instances are found, it deletes all of them.
+		"""
 		found = False
 		items_to_remove = []
 		for i in self.configopts:
