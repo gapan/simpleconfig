@@ -12,7 +12,7 @@ class SimpleConfig:
 	'OPTION', '=' and 'value'. The same 'OPTION' can be used more
 	than once, so you can have multiple values. For those reasons,
 	no other existing config library can be used.
-	You can call it like:
+	You can call it like this:
 	from simpleconfig import SimpleConfig
 	c = SimpleConfig('/path/to/configfile')
 	"""
@@ -107,7 +107,7 @@ class SimpleConfig:
 
 	def remove(self, option, value):
 		"""Remove an otion/value pair from the config. If there
-		are multiple occurences in will only remove all of them.
+		are multiple occurences it will only remove all of them.
 		Raises a ValueError if there is no match for the
 		option/value pair.
 		"""
