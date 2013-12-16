@@ -106,7 +106,7 @@ class SimpleConfig:
 		self.configopts.append([option, value])
 
 	def remove(self, option, value):
-		"""Remove an otion/value pair from the config. If there
+		"""Remove an option/value pair from the config. If there
 		are multiple occurences it will only remove all of them.
 		Raises a ValueError if there is no match for the
 		option/value pair.
