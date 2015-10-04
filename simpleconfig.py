@@ -59,7 +59,7 @@ class SimpleConfig:
                 break
         # raise an exception if there is no such option
         if value is None:
-            raise ValueError('No option with the name ' + option)
+            raise ValueError('No option with the name {}'.format(option))
         return value
 
     def get_all(self, option):
@@ -74,7 +74,7 @@ class SimpleConfig:
                 values.append(i[1])
         # raise an exception if there is no such option
         if values == []:
-            raise ValueError('No option with the name ' + option)
+            raise ValueError('No option with the name {}'.format(option))
         return values
 
     def change(self, option, oldval, newval):
@@ -88,8 +88,8 @@ class SimpleConfig:
                 i[1] = newval
                 found = True
         if not found:
-            raise ValueError('No option with the name ' +
-                             option + ' and value ' + oldval)
+            raise ValueError('No option with the name {opt} and value {val}'
+                    .format(opt=option, val=oldval))
 
     def set(self, option, newval):
         """Assigns a new value to an existing option. If there
@@ -104,7 +104,7 @@ class SimpleConfig:
                 i[1] = newval
                 found = True
         if not found:
-            raise ValueError('No option with the name ' + option)
+            raise ValueError('No option with the name {}'.format(option))
 
     def add(self, option, value):
         """Adds a new option/value to the config."""
@@ -123,8 +123,8 @@ class SimpleConfig:
                 items_to_remove.append(i)
                 found = True
         if not found:
-            raise ValueError('No option with the name ' +
-                             option + ' and value ' + value)
+            raise ValueError('No option with the name {opt} and value {val}'
+                    .format(opt=option, val=value))
         else:
             for i in items_to_remove:
                 self.configopts.remove(i)
@@ -140,7 +140,7 @@ class SimpleConfig:
                 items_to_remove.append(i)
                 found = True
         if not found:
-            raise ValueError('No option with the name ' + option)
+            raise ValueError('No option with the name {}'.format(option))
         else:
             for i in items_to_remove:
                 self.configopts.remove(i)
@@ -149,5 +149,5 @@ class SimpleConfig:
         """Writes configuration options back to the file."""
         f = open(self.configfile, 'w')
         for i in self.configopts:
-            f.write(i[0] + '=' + i[1] + '\n')
+            f.write('{opt}={val}\n'.format(opt=i[0],val=i[1]))
         f.close()
