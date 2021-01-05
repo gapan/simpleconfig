@@ -43,6 +43,11 @@ class SimpleConfig:
                         else:
                             self.configopts[option] = [ value ]
 
+    def get_options(self):
+        """Returns a list of all available options.
+        """
+        return list(self.configopts.keys())
+
     def get(self, option):
         """Returns the first matching option in the file. Raises
         a ValueError if there is no match.
