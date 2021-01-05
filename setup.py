@@ -10,7 +10,7 @@ from simpleconfig import __version__ as VERSION
 NAME = 'simpleconfig'
 MODULES = ['simpleconfig']
 DESCRIPTION = 'Simple configuration file reading/writing'
-URL = 'http://www.salixos.org'
+URL = 'https://github.com/gapan/simpleconfig'
 LICENSE = 'GPLv3'
 PLATFORMS = ["Platform Independent"]
 
