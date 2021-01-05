@@ -22,24 +22,23 @@ class SimpleConfig:
 
     def __init__(self, configfile):
         self.configfile = configfile
-        f = open(configfile, 'r')
-        self.configopts = []
-        for line in f:
-            # Yes, we don't read any commented out lines. We
-            # might lose them afterwards when writing the
-            # file, but I don't want to deal with that, it's
-            # simpler this way.
-            if line.lstrip(' ').startswith('#'):
-                pass
-            else:
-                # also leave out any lines that are
-                # obviously not config lines (they don't
-                # have an = sign)
-                if '=' in line:
-                    option = line.partition('=')[0]
-                    value = line.partition('=')[2].replace('\n', '')
-                    self.configopts.append([option, value])
-        f.close()
+        with open(configfile, 'r') as f:
+            self.configopts = []
+            for line in f:
+                # Yes, we don't read any commented out lines. We
+                # might lose them afterwards when writing the
+                # file, but I don't want to deal with that, it's
+                # simpler this way.
+                if line.lstrip(' ').startswith('#'):
+                    pass
+                else:
+                    # also leave out any lines that are
+                    # obviously not config lines (they don't
+                    # have an = sign)
+                    if '=' in line:
+                        option = line.partition('=')[0]
+                        value = line.partition('=')[2].replace('\n', '')
+                        self.configopts.append([option, value])
 
     def read(self):
         """Returns all options/values from the config file to a
