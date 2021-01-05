@@ -6,7 +6,7 @@
 
 __version__ = '0.3'
 
-import collections
+from collections import OrderedDict
 
 class SimpleConfig:
     """This is a class for managing simple configuration files with
@@ -23,7 +23,7 @@ class SimpleConfig:
     def __init__(self, configfile):
         self.configfile = configfile
         with open(configfile, 'r') as f:
-            self.configopts = collections.OrderedDict()
+            self.configopts = OrderedDict()
             for line in f:
                 # Yes, we don't read any commented out lines. We
                 # might lose them afterwards when writing the
