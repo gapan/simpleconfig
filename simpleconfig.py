@@ -6,6 +6,7 @@
 
 __version__ = '0.3'
 
+import collections
 
 class SimpleConfig:
     """This is a class for managing simple configuration files with
@@ -13,8 +14,7 @@ class SimpleConfig:
     there are no sections and all options in the configuration files
     use a strict "OPTION=value" format, with no spaces between
     'OPTION', '=' and 'value'. The same 'OPTION' can be used more
-    than once, so you can have multiple values. For those reasons,
-    no other existing config library can be used.
+    than once, so you can have multiple values.
     You can call it like this:
     from simpleconfig import SimpleConfig
     c = SimpleConfig('/path/to/configfile')
@@ -23,7 +23,7 @@ class SimpleConfig:
     def __init__(self, configfile):
         self.configfile = configfile
         with open(configfile, 'r') as f:
-            self.configopts = []
+            self.configopts = collections.OrderedDict()
             for line in f:
                 # Yes, we don't read any commented out lines. We
                 # might lose them afterwards when writing the
@@ -38,12 +38,14 @@ class SimpleConfig:
                     if '=' in line:
                         option = line.partition('=')[0]
                         value = line.partition('=')[2].replace('\n', '')
-                        self.configopts.append([option, value])
+                        if option in self.configopts:
+                            self.configopts[option].append(value)
+                        else:
+                            self.configopts[option] = [ value ]
 
     def read(self):
         """Returns all options/values from the config file to a
-        list. The list is formatted like:
-        [[option, value], [option, value]...]
+        dictionary.
         """
         return self.configopts
 
@@ -51,15 +53,9 @@ class SimpleConfig:
         """Returns the first matching option in the file. Raises
         a ValueError if there is no match.
         """
-        value = None
-        for i in self.read():
-            if i[0] == option:
-                value = i[1]
-                break
-        # raise an exception if there is no such option
-        if value is None:
-            raise ValueError('No option with the name {}'.format(option))
-        return value
+        if option in self.configopts:
+            return self.configopts[option][0]
+        raise ValueError('No option with the name {}'.format(option))
 
     def get_all(self, option):
         """Returns a list of matching options in the file. This
@@ -67,86 +63,73 @@ class SimpleConfig:
         values.
         Raises a ValueError if there is no match for option.
         """
-        values = []
-        for i in self.read():
-            if i[0] == option:
-                values.append(i[1])
-        # raise an exception if there is no such option
-        if values == []:
-            raise ValueError('No option with the name {}'.format(option))
-        return values
+        if option in self.configopts:
+            return self.configopts[option]
+        raise ValueError('No option with the name {}'.format(option))
 
     def change(self, option, oldval, newval):
         """Changes an old value of an option to a new value.
-        Raises a ValueError if there is no match for
-        option/oldval.
+        If there are multiple matches, it changes all of them.
+        Raises a ValueError if there is no match for option/oldval.
         """
-        found = False
-        for i in self.configopts:
-            if i[0] == option and i[1] == oldval:
-                i[1] = newval
-                found = True
-        if not found:
-            raise ValueError('No option with the name {opt} and value {val}'
-                    .format(opt=option, val=oldval))
+        if option in self.configopts:
+            if oldval in self.configopts[option]:
+                for n, val in enumerate(self.configopts[option]):
+                    if val == oldval:
+                        self.configopts[option][n] = newval
+                return
+        raise ValueError('No option with the name {opt} and value {val}'
+                .format(opt=option, val=oldval))
 
     def set(self, option, newval):
         """Assigns a new value to an existing option. If there
         are multiple options with the same name, it will only
         change the first occurence.
-        Raises a ValueError if there is no match for
-        option.
+        Raises a ValueError if there is no match for option.
         """
-        found = False
-        for i in self.configopts:
-            if i[0] == option:
-                i[1] = newval
-                found = True
-        if not found:
+        if option in self.configopts:
+            self.configopts[option][0] = newval
+        else:
             raise ValueError('No option with the name {}'.format(option))
 
     def add(self, option, value):
         """Adds a new option/value to the config."""
-        self.configopts.append([option, value])
+        if option in self.configopts:
+            self.configopts[option].append(value)
+        else:
+            self.configopts[option] = [ value ]
 
     def remove(self, option, value):
         """Remove an option/value pair from the config. If there
-        are multiple occurences it will only remove all of them.
+        are multiple occurences it will remove all of them.
         Raises a ValueError if there is no match for the
         option/value pair.
         """
         found = False
-        items_to_remove = []
-        for i in self.configopts:
-            if i[0] == option and i[1] == value:
-                items_to_remove.append(i)
+        if option in self.configopts:
+            if value in self.configopts[option]:
                 found = True
+                self.configopts[option][:] = [x for x in
+                        self.configopts[option] if x != value]
+            if len(self.configopts[option]) == 0:
+                self.configopts.pop(option)
         if not found:
             raise ValueError('No option with the name {opt} and value {val}'
                     .format(opt=option, val=value))
-        else:
-            for i in items_to_remove:
-                self.configopts.remove(i)
 
     def remove_all(self, option):
         """Removes an option from the config. If multiple
         instances are found, it deletes all of them.
         """
-        found = False
-        items_to_remove = []
-        for i in self.configopts:
-            if i[0] == option:
-                items_to_remove.append(i)
-                found = True
-        if not found:
-            raise ValueError('No option with the name {}'.format(option))
+        if option in self.configopts:
+            self.configopts.pop(option)
         else:
-            for i in items_to_remove:
-                self.configopts.remove(i)
+            raise ValueError('No option with the name {}'.format(option))
 
     def write(self):
         """Writes configuration options back to the file."""
-        f = open(self.configfile, 'w')
-        for i in self.configopts:
-            f.write('{opt}={val}\n'.format(opt=i[0],val=i[1]))
-        f.close()
+        with open(self.configfile, 'w') as f:
+            for option in self.configopts:
+                for value in self.configopts[option]:
+                    f.write('{opt}={val}\n'.format(opt=option,val=value))
+
