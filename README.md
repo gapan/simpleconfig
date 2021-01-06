@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Please use [textconfig](https://github.com/gapan/textconfig) instead.
+
 # About
 
 SimpleConfig is a Class for managing simple configuration files with
